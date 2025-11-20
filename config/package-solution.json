@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "ekyc-client-side-solution",
+    "id": "b427c5d1-e3b7-46de-9e0e-c20f1bcffe60",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "EKYC description"
+      },
+      "longDescription": {
+        "default": "EKYC description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "ekyc Feature",
+        "description": "The feature that activates elements of the ekyc solution.",
+        "id": "8f1420ac-f0a1-4f0f-8fc8-eeb72a050ba4",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/ekyc.sppkg"
+  }
+}

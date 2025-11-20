@@ -1,0 +1,18 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "22.16.0",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "ekyc",
+    "libraryId": "b427c5d1-e3b7-46de-9e0e-c20f1bcffe60",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "EKYC",
+    "solutionShortDescription": "EKYC description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
