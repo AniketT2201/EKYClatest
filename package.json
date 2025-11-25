@@ -70,6 +70,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/webpack-env": "~1.15.2",
     "ajv": "^6.12.5",
+    "baseline-browser-mapping": "^2.8.31",
     "eslint": "8.57.1",
     "eslint-plugin-react-hooks": "4.3.0",
     "gulp": "4.0.2",

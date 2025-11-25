@@ -32,7 +32,7 @@ import { Parallax } from 'react-scroll-parallax';
 // Load Bootstrap + FontAwesome
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
-SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+//SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
 
 
 interface NavigationItem {
@@ -787,7 +787,7 @@ const validateForm = () => {
   
   return (
     <div className={`pageContainer `}>
-      <div className={`menuWrapper fade-in ${visible ? 'visible' : ''}`} style={{ transitionDelay: '0.4s'}}>
+      <div className={`menuWrapper fade-in ${visible ? 'visible' : ''}`} style={{ transitionDelay: '0.5s'}}>
         <div className ="Logo">
           <img src={logo}alt="Logo" />
         </div>
@@ -823,9 +823,9 @@ const validateForm = () => {
       </div>
 
       <div>
-        <h1 className={`main-heading fade-in ${visible ? 'visible' : ''}`} style={{ transitionDelay: '0.4s'}}>E-KYC Dashboard Prince</h1>
+        <h1 className={`main-heading fade-in ${visible ? 'visible' : ''}`} style={{ transitionDelay: '1.6s'}}>E-KYC Dashboard Prince</h1>
       </div>
-      <div className={`createFormBtnWrapper fade-in ${visible ? 'visible' : ''}`} style={{ transitionDelay: '0.7s'}}>
+      <div className={`createFormBtnWrapper fade-in ${visible ? 'visible' : ''}`} style={{ transitionDelay: '2.5s'}}>
         <button className="createFormBtn"
           onClick={handleCreate}>
           Add KYC-Prince
@@ -833,7 +833,7 @@ const validateForm = () => {
       </div>
 
       {/* Search and Page Size Controls */}
-      <div className={`"table-controls d-flex mb-3 flex-wrap" fade-in ${visible ? 'visible' : ''}`} style={{marginLeft: '2%', transitionDelay: '0.7s'}}>
+      <div className={`"table-controls d-flex mb-3 flex-wrap" fade-in ${visible ? 'visible' : ''}`} style={{marginLeft: '2%', transitionDelay: '3.0s'}}>
         <div className="search-container me-3 mb-2" style={{height: 'auto', position: 'relative'}}>
           <Search24Regular className='searchIcon' />
           <input
@@ -866,8 +866,8 @@ const validateForm = () => {
       </div>
 
       
-      <div className={`Table-container fade-in ${visible ? 'visible' : ''}`} style={{ transitionDelay: '1.4s'}}>
-        <table className={`"Table responsive-table" ${visible ? 'visible' : ''}`} style={{ transitionDelay: '1.6s'}}>
+      <div className={`Table-container fade-in ${visible ? 'visible' : ''}`} style={{ transitionDelay: '3.5s'}}>
+        <table className={`Table responsive-table ${visible ? 'visible' : ''}`} style={{ transitionDelay: '4.0s'}}>
           <thead className="Table-header">
             <tr className="Header-rows">
               {columnsConfig.map(col => (
@@ -875,10 +875,10 @@ const validateForm = () => {
               ))}
             </tr>
           </thead>
-          <tbody className={`"Table-body" ${visible ? 'visible' : ''}`} style={{ transitionDelay: '0.2s'}}>
+          <tbody className={`Table-body ${visible ? 'visible' : ''}`} style={{ transitionDelay: '4.5s'}}>
             {currentRows.length > 0 ? (
               currentRows.map((item, index) => (
-                <tr key={index} className={`"Body-rows" ${index % 2 === 0 ? "even" : "odd"}`}>
+                <tr key={index} className={`Body-rows ${visible ? 'visible' : ''} ${index % 2 === 0 ? "even" : "odd"}`}>
                   {columnsConfig.map((col) => (
                     <td key={col.key} className="Body-data">
                       {col.render
@@ -1103,7 +1103,7 @@ const validateForm = () => {
                         required
                   />
                 </div>
-                <div className="form-group"><label>Mobile:</label>
+                <div className="form-group"><label>Mobile</label>
                   <input
                     type="text"
                     value={formData.MobileNo || ""}
@@ -1132,7 +1132,7 @@ const validateForm = () => {
                 )}
 
                 <div className="form-group">
-                  <label>Email:</label>
+                  <label>Email</label>
                   <input
                     type="email"
                     value={formData.Email || ""}
@@ -1309,7 +1309,7 @@ const validateForm = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Mobile:</label>
+                  <label>Mobile</label>
                   <input
                     type="text"
                     value={formData.MobileNo || ""}
@@ -1353,7 +1353,7 @@ const validateForm = () => {
               <div className="form-grid-0">
                 {/* National Head */}
                 <div className="form-group">
-                  <label>National Head</label>
+                  <label>National Head*</label>
                 </div>
                 <div className="form-group">
                   <input type="text" value={formData.NationalHeadEmail || ""} readOnly />

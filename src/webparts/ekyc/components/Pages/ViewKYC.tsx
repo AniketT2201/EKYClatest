@@ -26,8 +26,8 @@ import { useHistory } from 'react-router-dom';
 
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
-SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
-SPComponentLoader.loadCss('https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css');
+//SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+//SPComponentLoader.loadCss('https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css');
 
 
 
@@ -36,6 +36,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
 	const {httpClient} = props;
 	const [kycData, setKycData] = React.useState<any>(null);
   const histroy =useHistory();
+  const kycRef = React.useRef<any>(null);
 
   const kycService = new KycService(props.currentSPContext.httpClient);
   const [activeTab, setActiveTab] = useState("communication");
@@ -339,7 +340,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
 			  .split(",")
 			  .map((email: string) => email.trim());
 
-        //currentApproverList[0] = 'Sharepoint-admin@princepipes.com';
+      //currentApproverList[0] = 'Sharepoint-admin@princepipes.com';
 	  
 			if (currentApproverList.includes(currentUserEmail)) {
 			  setIsCurrentApprover(true);
@@ -518,7 +519,8 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
         });
       }
     };
-  
+    
+    //currently not in working
     const handleSubmit = async (event: Event) => {
       event.preventDefault(); // Prevents default behavior (like page reload)
     
@@ -528,6 +530,14 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
     
     // Update KYC
     const updateKyc = async () => {
+
+      const data = kycRef.current;
+ 
+      // If data.CustomerCode is either null or the string "null", fall back to kycData.CustomerCode
+      const finalCustomerCode = (data && data.CustomerCode && data.CustomerCode !== "null")
+      ? data.CustomerCode
+      : kycData.CustomerCode;
+
       if (!kycData) return;
     
       if (!kycData["Gross Turnover"]) {
@@ -589,7 +599,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
         CreditPeriodPipes: kycData["Credit Period Pipes"],
         CreditLimit: kycData["Credit Limit"],
         NearestDistributor: kycData["Nearest Distributor"],
-        CustomerCode: kycData.CustomerCode,
+        CustomerCode: finalCustomerCode,
         DateofBirth: kycData["Date of Birth"],
         Mobile_nos: kycData.Mobile_nos,
         Name_of_the_person: kycData.Name_of_the_person,
@@ -631,7 +641,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
         ActionID: '6',
         ModifiedBy: 'XYZ', // Replace with actual user ID if necessary
         KYCStatus: kycData["New KYC Status"],
-        SHPID: kycData.ID,
+        SHPID: itemID,
         SecurityNo: securityNo,
       };
     
@@ -663,7 +673,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
         KYCStatus: '1', // Assuming "1" represents rejected status
         SecurityNo: securityNo,
         IsPending: kycData.IsPending,
-        SHPID: kycData.ID,
+        SHPID: itemID,
         RejectRemark: rejectRemark,
       };
     
@@ -689,7 +699,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
       const requestBody = {
         ActionID: '8',
         SecurityNo: securityNo,
-        SHPID: kycData?.ID,
+        SHPID: itemID,
       };
     
       const _apiUrl = "https://uat.princepipes.com:567/api/CustomerKYC/updateSHPID";
@@ -710,6 +720,12 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
       if (!kycData || !itemID) return;
 
       try {
+        const data = kycRef.current;
+ 
+        // If data.CustomerCode is either null or the string "null", fall back to kycData.CustomerCode
+        const customerCode = (data && data.CustomerCode && data.CustomerCode !== "null")
+        ? data.CustomerCode
+        : kycData.CustomerCode;
 
       const spCrudOpsInstance = await SPCRUDOPS;
        (await spCrudOpsInstance()).updateData(
@@ -719,7 +735,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
         FirmName: kycData["Firm Name"],
           MobileNo:''+ kycData["Mobile No"],
           Email: kycData.Email,
-          CustomerID: kycData.CustomerCode,
+          CustomerID: customerCode,
           ApprovedBy: kycData.IsPending,
 
       },
@@ -793,16 +809,24 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
 
         if (response[0] && response[0].Result === 'Failed') {
           Swal.fire('Error', 'Server Busy!!', 'error');
+          
         } else {
-          setKycData((prev: any) =>
-            prev ? { ...prev, CustomerCode: response[0].CustomerCode } : prev
-          );
+          // Build updated object synchronously
+          const updatedKycData = {
+            ...kycData,  // Retain the name 'kycData'
+            CustomerCode: response[0].CustomerCode,
+          };
+ 
+          // Update ref first (sync)
+          kycRef.current = updatedKycData;
+ 
+          // Update state (async)
+          setKycData(updatedKycData);
+
           Swal.fire('Success', 'Details Updated in Navision!!', 'success');
           await updateKyc();
-          //<Link to={`/`}></Link>
-      // const   siteurl = props.currentSPContext.pageContext.web.absoluteUrl 
-      //     window.location.href =`${siteurl}+'/'`
-      histroy.push('/')
+
+          histroy.push('/')
         }
       } catch (error) {
         console.error('Error updating Navision:', error);
@@ -1500,67 +1524,87 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
 								I hereby authorise sharing of the information furnished on the form.
 							</label>
 						</div>
-            {showButtons.secondaryPatch && (
-              <div className="col-span-2 mt-3 mb-3">
-                <label className="flex items-center">
+            {showButtons.secondaryPatch && ( 
+              <div className="col">
+                <label className="modcheckbox">
                   <input
                     type="checkbox"
                     checked={kycData?.SecondaryPatchInstalled}
-                    onChange={(e) => setKycData((prev: any) => prev ? ({ ...prev, SecondaryPatchInstalled: e.target.checked }) : prev)}
-                    onClick={() => updateKyc()}
+                    onChange={(e) =>
+                      setKycData((prev: any) =>
+                        prev ? { ...prev, SecondaryPatchInstalled: e.target.checked } : prev
+                      )
+                    }
+                    //onClick={() => updateKyc()}
                   />
-                  <Link to={"/"}></Link>
-                  <span className="ml-2">DMS Training of Distributor is completed, and Secondary Patch has been installed.</span>
+                  <span>
+                    DMS Training of Distributor is completed, and Secondary Patch has been installed.
+                  </span>
                 </label>
               </div>
             )}
 
-            
-            {/* <button className="bg-green-500 text-white p-2 rounded" onClick={createInNavision}>Create In Navision</button> */}
-
             {showButtons.navision && (
-              <div>
-                <button type='button' className="bg-green-500 text-white p-2 rounded m-3" onClick={createInNavision}>Create In Navision</button>
-              </div>
-            )}
+              <button type="button" className="btn btn-green" onClick={createInNavision}>
+                Create In Navision
+              </button>
+            )} 
+
             {isCurrentApprover && (
-              <div className="col-span-2 flex space-x-4">
+              <div className="buttonrows">
                 {showButtons.update && (
-                  <button type='button' className="bg-blue-500 text-white p-2 rounded" onClick={updateKyc}>Update</button>
-                )}
+                  <button type="button" className="btn btn-blue" onClick={updateKyc}>
+                    Update
+                  </button>
+                )} 
+
                 {showButtons.approve && (
-                  <button type='button' className="bg-green-500 text-white p-2 rounded" onClick={approveKyc}>Approve</button>
+                  <button type="button" className="btn btn-green" onClick={approveKyc}>
+                    Approve
+                  </button>
                 )}
+
                 {showButtons.reject && (
-                  <button type='button' className="bg-red-500 text-white p-2 rounded" onClick={() => setShowRejectModal(true)}>Reject</button>
-                )}
+                  <button type="button" className="btn btn-red" onClick={() => setShowRejectModal(true)}>
+                    Reject
+                  </button>
+                )} 
+
                 {showButtons.save && (
-                  <button type='button' className="bg-green-600 text-white p-2 rounded" onClick={updateKyc}>Submit</button>
-                )}
+                  <button type="button" className="btn btn-green" onClick={updateKyc}>
+                    Submit
+                  </button>
+               )}
               </div>
             )}
-             {/* <button className="bg-green-600 text-white p-2 rounded m-3" onClick={updateKyc}>Submit</button> */}
-            {/* Reject Modal */}
+
             {showRejectModal && (
-              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-                <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
-                  <div className="flex justify-end">
-                    <button className="text-red-500" onClick={() => setShowRejectModal(false)}>×</button>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium">Reject Remark</label>
-                    <textarea
-                      className="w-full p-2 border rounded"
-                      value={rejectRemark}
-                      onChange={(e) => setRejectRemark(e.target.value)}
-                    ></textarea>
-                  </div>
-                  <div className="mt-4">
-                    <button type='button' className="bg-red-500 text-white p-2 rounded" onClick={rejectKyc}>Reject</button>
-                  </div>
+              <div className="modalbackdrop">
+                <div className="modalbox">
+                  <button className="modalclose" onClick={() => setShowRejectModal(false)} style={{fontWeight: 700}}>
+                    ×
+                  </button>
+
+                  <label className="block text-sm font-medium" style={{fontSize: 'medium', fontWeight: 500}}>Reject Remark</label>
+
+                  <textarea
+                    className="modtextarea"
+                    style={{marginTop: '6px'}}
+                    value={rejectRemark}
+                    onChange={(e) => setRejectRemark(e.target.value)}
+                  />
+
+                  <button
+                    type="button"
+                    className="btn btn-red mt-3"
+                    onClick={rejectKyc}
+                  >
+                    Reject
+                  </button>
                 </div>
               </div>
             )}
+
 
 					</form>
 				)}
