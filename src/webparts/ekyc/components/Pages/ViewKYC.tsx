@@ -55,6 +55,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
 	const [showButtons, setShowButtons] = useState<{
 		approve: boolean;
 		reject: boolean;
+    reject1: boolean;
 		update: boolean;
 		navision: boolean;
 		save: boolean;
@@ -62,6 +63,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
 	}>({
 		approve: false,
 		reject: false,
+    reject1: false,
 		update: false,
 		navision: false,
 		save: false,
@@ -402,6 +404,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
             setShowButtons({
               approve: false,
               reject: false,
+              reject1: false,
               update: false,
               navision: true,
               save: true,
@@ -411,6 +414,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
             setShowButtons({
               approve: false,
               reject: false,
+              reject1: false,
               update: false,
               navision: false,
               save: true,
@@ -420,6 +424,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
             setShowButtons({
               approve: false,
               reject: false,
+              reject1: false,
               update: false,
               navision: false,
               save: false,
@@ -429,6 +434,7 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
             setShowButtons({
               approve: true,
               reject: true,
+              reject1: true,
               update: true,
               navision: false,
               save: false,
@@ -1542,6 +1548,11 @@ export const ViewKYC: React.FunctionComponent<IEkycProps> = (props: IEkycProps) 
                   </span>
                 </label>
               </div>
+            )}
+            {showButtons.reject1 && (
+              <button type='button' className='btn btn-red' onClick={() => setRejectRemark("")}>
+                Reject1
+              </button>
             )}
 
             {showButtons.navision && (

@@ -33,17 +33,17 @@ export default function DashboardOps(): IDashboardOps {
         try {
             const spCrudOpsInstance = await spCrudOps;
 
-            // // Assuming current user id is available via props
-            // const currentUserId = props.currentSPContext.pageContext.legacyPageContext.userId;
+            // Assuming current user id is available via props
+            const currentUserId = props.currentSPContext.pageContext.legacyPageContext.userId;
 
-            // // Filter to only show items created by current user
-            // const filter = `Author/Id eq ${currentUserId}`;
+            // Filter to only show items created by current user
+            const filter = `PipingSystem eq 'Prince' and Author/Id eq ${currentUserId}`;
 
             const results = await spCrudOpsInstance.getData(
                 "Ekyc",
                 "*,Id,Created,Modified,EmployeeCode,FirmName,Email,MobileNo,ApprovedBy,PipingSystem,NantionalHeadName,ZoneHeadName,StateHeadName,AttachmentFiles,SecurityCode",
                 "AttachmentFiles",
-                "PipingSystem eq 'Prince'",
+                filter,
                 { column: "Id", isAscending: false }, 
                 props
             );
@@ -178,7 +178,8 @@ export default function DashboardOps(): IDashboardOps {
                 PipingSystem: item.PipingSystem,
                 NantionalHeadName: item.NationalHeadEmail,
                 ZoneHeadName: item.ZonalHeadEmail,
-                StateHeadName: item.StateHeadEmail
+                StateHeadName: item.StateHeadEmail,
+                SecurityCode: item.SecurityCode
 
             }, 
             props);

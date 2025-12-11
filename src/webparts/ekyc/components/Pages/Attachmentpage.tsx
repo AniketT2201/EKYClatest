@@ -20,6 +20,7 @@ export const Attachmentpage: React.FunctionComponent<IEkycProps> = (props: IEkyc
     const { itemId } = useParams<{ itemId: string }>(); // get route param
     const location = useLocation();
     const history = useHistory();
+    const [visible, setVisible] = useState(false);
     const [formData, setFormData] = useState<IEKYC>({
         Id : '',
         EmployeeCode : '',
@@ -48,7 +49,12 @@ export const Attachmentpage: React.FunctionComponent<IEkycProps> = (props: IEkyc
         SecurityCode: ''
       };
   
-
+       // useeffect for fade - in effects on page load 
+        useEffect(() => {
+          // trigger fade-in after mount
+          const timer = setTimeout(() => setVisible(true), 100); // small delay
+          return () => clearTimeout(timer);
+        }, []);
 
        useEffect(() => {
             const params = new URLSearchParams(location.search);
@@ -116,6 +122,7 @@ export const Attachmentpage: React.FunctionComponent<IEkycProps> = (props: IEkyc
             alert("Failed to delete attachment.");
           }
         };
+
         const handleClose = async () => {
           if (!popupRef.current) {
             console.error("popupRef is not defined");
@@ -217,6 +224,7 @@ export const Attachmentpage: React.FunctionComponent<IEkycProps> = (props: IEkyc
           }
         };
 
+
         //for clearning input field of an attachment section
         const handleRemoveFile = (idx: number) => {
             setNewFiles((prev) => {
@@ -298,12 +306,28 @@ export const Attachmentpage: React.FunctionComponent<IEkycProps> = (props: IEkyc
             }
           };
 
+          const handleclick = async () => {
+            await DashboardOps().updateDashboardData(itemId as any, 
+            { 
+              FirmName: 'test',
+              EmployeeCode: '100',
+              Email: 'any@gmail.com',
+              MobileNo: '1234567890',
+              ApprovedBy: 'Admin',
+              Attachment: 'attachment',
+              RegDetail: 'regdetail',
+              View: 'view',
+              PipingSystem: 'Prince'
+
+            }, props);
+
+          }
 
 
     return (
 
-            <div className="popup-overlay-attachment">
-              <div className="popup-card-attachment" ref={popupRef}>
+            <div className={`popup-overlay-attachment`} >
+              <div className={`popup-card-attachment fade-in ${visible ? 'visible' : ''}`} ref={popupRef} >
                 <div className="attachment-section">
                       <div className="popup-header-attachment">
                         <h3 className="form-section-title">Attachments</h3>

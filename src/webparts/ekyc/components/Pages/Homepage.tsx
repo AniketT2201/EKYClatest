@@ -28,6 +28,7 @@ import anime from "animejs/lib/anime.es.js"; // Ensure correct path
 import html2canvas from 'html2canvas';
 import { Search24Regular } from "@fluentui/react-icons";
 import { Parallax } from 'react-scroll-parallax';
+import KycService from '../../utils/KycService';
 
 // Load Bootstrap + FontAwesome
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
@@ -50,6 +51,8 @@ interface Props {
 
 export const Homepage: React.FunctionComponent<IEkycProps> = (props: IEkycProps) => {
   //const [data, setData] = useState<ITopNavigation[]>([]);
+  const [loading, setLoading] = useState(false);
+  const kycService = new KycService(props.currentSPContext.httpClient);
   const [isLoading, setIsLoading] = useState(true);
   const [groupedData, setGroupedData] = useState<Record<string, ITopNavigation[]>>({});
   const [topMenuData, setTopMenuData] = useState<NavigationItem[]>([]);
@@ -513,8 +516,44 @@ const columnsConfig = [
   }
 };
 
+  const handleFetchSecutiryCode = async () => {
+    const _apiUrl = "https://uat.princepipes.com:567/api/CustomerKYC/sendKYCRequest";
+  
+      const requestBody = {
+        ActionID: "1",
+        FirmName: formData.FirmName ?? "",
+        MobileNo: formData.MobileNo ?? "",
+        Email: formData.Email?.toLowerCase() ?? "",
+        ModifiedBy: formData.EmployeeCode ?? "",
+        NationalHead: formData.NationalHeadEmail?.toLowerCase() ?? "",
+        StateHead: formData.StateHeadEmail?.toLowerCase() ?? "",
+        ZoneHead: formData.ZonalHeadEmail?.toLowerCase() ?? ""
+      };
+    setLoading(true);
+    try {
+      const response = await kycService.getCustomerKYCDetails(requestBody,_apiUrl);
+    
+      if (response?.aMessage?.[0]?.Result === "100") {
+        const data = response.Table[0];
+        const updatedData = {
+          ...formData,
+          SecurityCode: response.Table[0].SecurityNo
+        };
+        setFormData(updatedData);
+        handleSubmit(updatedData);
+      }
+  
+    } catch (error) {
+      alert("Email Already Exist..");
+      console.error("Email Already Exist..", error);
+      
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Handle form submission for both create and update----------------------------->
-  const handleSubmit = async () => {
+  const handleSubmit = async (formData: any) => {
     try {
       let itemId: number;
 
@@ -728,7 +767,7 @@ const validateForm = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
+      setLoading(true);
       try {
         const [dashboardData] = await Promise.all([
           DashboardOps().getDashboardData(props)
@@ -739,7 +778,7 @@ const validateForm = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
@@ -787,6 +826,12 @@ const validateForm = () => {
   
   return (
     <div className={`pageContainer `}>
+      {/* SPINNER */}
+      {loading && (
+        <div className="loadingOverlay">
+          <div className="spinner"></div>
+        </div>
+      )}
       <div className={`menuWrapper fade-in ${visible ? 'visible' : ''}`} style={{ transitionDelay: '0.5s'}}>
         <div className ="Logo">
           <img src={logo}alt="Logo" />
@@ -945,7 +990,7 @@ const validateForm = () => {
                 console.log("Validation failed");
                 return;
               }
-              handleSubmit();
+              handleFetchSecutiryCode();
               }}>
               {/* Employee Details */}
               <h3 className="form-section-title">Employee Details</h3>
@@ -1289,7 +1334,7 @@ const validateForm = () => {
                   alert("Invalid Employee Code. Please enter a valid code.");
                   return;
                 }
-                handleSubmit();
+                handleSubmit(formData);
               }}
             >
 
